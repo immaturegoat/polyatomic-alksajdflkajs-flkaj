@@ -18,42 +18,55 @@ fn main() {
     let mut input = String::new();
     println!("1. Ion -> Formula");
     println!("2. Formula -> Ion");
-    println!("3. Exit");
+    println!("3. Mixed practice");
+    println!("4. Exit");
     stdin().read_line(&mut input).expect("Failed to read line :(");
 
     if input.trim() == "1" {
         game(1, terms);
     } else if input.trim() == "2" {
         game(2, terms);
-    } else {
+    } else if input.trim() == "3" {
+        game(3, terms);
+    } 
+    else {
         println!("aw man :(")
     }
 }
 
 fn game(mode: u8, terms: HashMap<String, String>) {
     let mut running = true;
+    let mut final_mode = 0;
 
     while running {
         let mut input = String::new();
-        let mut rng = rand::thread_rng();
+        
+        let mut rng = rand::rng(); 
         if let Some((key, value)) = terms.iter().choose(&mut rng) {
-            if mode == 1 {
-                println!("{}", key);
-            } else if mode == 2 {
-                println!("{}", value);
+            if mode == 1 || mode == 2 {
+                final_mode = mode;
+            } else if mode == 3 {
+                final_mode = rand::random_range(1..=2);
             }
+
+            if final_mode == 1 {
+                println!("{}", key);
+            } else if final_mode == 2 {
+                println!("{}", value);
+            } 
+
             stdin().read_line(&mut input).expect("failed to read answer :(");
 
-            if input.trim() == "exit".to_string() {
+            if input.trim() == "exit" {
                 running = false;
-            } else if mode == 1 {
-                if input.trim() == value.to_string() {
+            } else if final_mode == 1 {
+                if &input.trim().to_uppercase() == &value.to_uppercase() {  // you can never be too safe lolol
                     println!("You got it right!")
                 } else {
                     println!("Wrong answer! The correct answer is {}", value);
                 } 
-            } else if mode == 2 {
-                if input.trim() == key.to_string() {
+            } else if final_mode == 2 {
+                if &input.trim().to_lowercase() == &key.to_lowercase() {
                     println!("You got it right!")
                 } else {
                     println!("Wrong answer! The correct answer is {}", key);
